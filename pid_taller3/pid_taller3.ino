@@ -98,7 +98,7 @@ void ciclo_control()
 //definimos el error:
   
   error = pid_setpoint - velocidad;
-  Serial.print("error: "); Serial.println(error,10);
+  //Serial.print("error: "); Serial.println(error,10);
   integrativo = integrativo + error;
   derivativo = velocidad - velocidad_anterior;
   

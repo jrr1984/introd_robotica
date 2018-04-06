@@ -28,7 +28,7 @@ double pid_input, pid_output, pid_setpoint, pid_last_input;
 #define PID_I  20
 #define PID_D  30
 #define CICLO_CONTROL_TIEMPO 10 // milisegundos
-int velocidadP = 0; // variables para vel promedio
+double velocidadP = 0; // variables para vel promedio
 int cuentas = 0;
 
 void setup()
@@ -65,6 +65,9 @@ void loop()
   #endif
 
   ciclo_control();  
+
+// Serial.print("vel: "); Serial.print(velocidad); Serial.print(" pwm: "); Serial.print(pwm); Serial.print(" t: "); Serial.print(tiempo_control);Serial.print(" delta_t: "); Serial.println(delta_t);
+ 
 }
 
 /***************************** CICLO DE CONTROL **********************/
@@ -81,10 +84,11 @@ void ciclo_control()
 
     /************* AGREGUE EL CODIGO AQUI **************/
 
-    int pwm = -110; // escribir en esta variable el pwm que se manda al motor (como valor positivo/negativo) en 55 se  mueve
+    int pwm = 100; // escribir en esta variable el pwm que se manda al motor (como valor positivo/negativo) en 55 se  mueve
     set_motor_pwm(pwm);
-    
-   // Serial.print("vel: "); Serial.print(velocidad,5); Serial.print(" pwm: "); Serial.print(pwm); Serial.print(" t: "); Serial.print(tiempo_control,5);Serial.print(" delta_t: "); Serial.println(delta_t);
+//Serial.print("El tiempo corre: "),Serial.println(tiempo_control),Serial.print("delta t: "),Serial.println(delta_t);
+
+  Serial.print("vel: "); Serial.print(velocidad,10); Serial.print(" pwm: "); Serial.print(pwm); Serial.print(" t: "); Serial.print(tiempo_control,10);Serial.print(" delta_t: "); Serial.println(delta_t);
  
   }  
 
@@ -97,14 +101,14 @@ float calcular_velocidad(double delta_t)
 {
   /************* AGREGUE EL CODIGO AQUI **************/
   
-  int vel = (encoder_position()*360/480-prev_pos)/delta_t; // creo que delta_t esta en milisegundos
+  float vel = (encoder_position()-prev_pos)*360/480/delta_t; // creo que delta_t esta en milisegundos
   prev_pos = encoder_position();
-  
-
-  int velocidadP = vel+velocidadP;
-  int cuentas = cuentas + 1;
-  int velP= velocidadP/cuentas;
-  Serial.print("La velocidad promedio es: "),Serial.println(velP);
+ 
+float velocidadP = vel+velocidadP;
+ int cuentas = cuentas + 1;
+ float velP= velocidadP/cuentas;
+// delay(1000);
+  //Serial.print("La velocidad promedio es: "),Serial.println(velP), Serial.print("La velocidad medida es "), Serial.println(vel); 
   return vel; // modificame
 }
 
@@ -112,12 +116,12 @@ void set_motor_pwm(int pwm)
 {
   /************* AGREGUE EL CODIGO AQUI **************/
   if(pwm >=0 && abs(pwm)<= 255){
-    analogWrite(PIN_MOT_A,abs(pwm));
-    analogWrite(PIN_MOT_B,0);
-  }
-  if(pwm <0 && abs(pwm)<= 255){
     analogWrite(PIN_MOT_B,abs(pwm));
     analogWrite(PIN_MOT_A,0);
+  }
+  if(pwm <0 && abs(pwm)<= 255){
+    analogWrite(PIN_MOT_A,abs(pwm));
+    analogWrite(PIN_MOT_B,0);
   }
 }
 

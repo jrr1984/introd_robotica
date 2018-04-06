@@ -80,7 +80,7 @@ double integrativo = 0;
 double pwm_out = 0;
       
 
-int pwm = 100;
+int pwm = 0; //no la usamos en el lazo cerrado
 void ciclo_control()
 {
   float tiempo_control = millis();
@@ -98,6 +98,7 @@ void ciclo_control()
 //definimos el error:
   
   error = pid_setpoint - velocidad;
+  Serial.print("error: "); Serial.println(error,10);
   integrativo = integrativo + error;
   derivativo = velocidad - velocidad_anterior;
   
@@ -121,7 +122,7 @@ void ciclo_control()
 //Serial.print("u: "); Serial.println(u_de_control,10);
  
   Serial.print("vel: "); Serial.print(velocidad,10); Serial.print(" pwm: "); Serial.print(pwm); Serial.print(" t: "); Serial.print(tiempo_control,10);Serial.print(" delta_t: "); Serial.println(delta_t);
-   velocidad = velocidad_anterior;
+   velocidad_anterior = velocidad;
 
 }
 //Serial.print("El tiempo corre: "),Serial.println(tiempo_control),Serial.print("delta t: "),Serial.println(delta_t);
